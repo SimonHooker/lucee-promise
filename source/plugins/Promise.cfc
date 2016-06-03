@@ -10,9 +10,28 @@ component {
 			throw( type = 'Promise.init.first_argument_must_be_a_callback_function' );
 		}
 
+		var value = '';
+		var action = 'unfinished';
 
+		callback(
+			function( response ) {
+				action = 'Resolve';
+				value = arguments.response;
+			},
+			function( error ) {
+				action = 'Reject';
+				value = arguments.response;
+			}
+		);
 
-		return new Response();
+		switch( action ) {
+			case 'Resolve':
+			case 'Reject':
+				return CreateObject( action , value );
+				break;
+		}
+
+		throw( type = 'Promise.init.not_resolved_or_rejected' );
 
 	}
 

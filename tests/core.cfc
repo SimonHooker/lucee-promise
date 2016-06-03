@@ -24,16 +24,13 @@ component extends='testbox.system.BaseSpec' {
 
 			} );
 
-			it( 'returns a PromiseResponse' , function() {
+			it( 'throws an error if the promise does not resolve or reject' , function() {
 
-				var actual = new Promise( function( resolve , reject ) {
+				expect( function() {
 
+					new Promise( function( resolve , reject ) {} );
 
-
-				} );
-
-				expect( actual ).toBeTypeOf( 'component' );
-				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
+				} ).toThrow( 'Promise.init.not_resolved_or_rejected' );
 
 			} );
 
