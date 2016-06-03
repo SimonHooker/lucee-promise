@@ -29,7 +29,7 @@
 <cfif structKeyExists( url, "action")>
 	<cfif directoryExists( expandPath( rootMapping & url.path ) )>
 		<cfoutput>#testbox.init(directory={
-			'mapping': 'tests.unit',
+			'mapping': 'tests',
 			'recurse': true,
 			'filter': function( required string path ) {
 				return ( ListLast( arguments.path , '/' ) != 'Application.cfc' );
