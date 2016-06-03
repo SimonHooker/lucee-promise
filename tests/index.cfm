@@ -1,19 +1,3 @@
-<!---
-<cfscript>
-	setting requesttimeout = 120 {}
-	WriteOutput(
-		new testbox.system.TestBox(
-			directory = {
-				'mapping': 'tests.unit',
-				'recurse': true,
-				'filter': function( required string path ) {
-					return ( ListLast( arguments.path , '/' ) != 'Application.cfc' );
-				} 
-			}
-		).run()
-	);
-</cfscript>
---->
 <cfscript>
 	setting requesttimeout=3600 {};
 </cfscript>
@@ -174,7 +158,7 @@
 <input type="hidden" name="opt_run" id="opt_run" value="true">
 
 	<div id="tb-left" class="centered">
-		<img src="TestBoxLogo125.png" alt="TestBox" id="tb-logo"/><br>v#testbox.getVersion()#<br>
+		v#testbox.getVersion()#<br>
 
 		<a href="index.cfm?action=runTestBox&path=#URLEncodedFormat( url.path )#" target="_blank"><button class="btn-red" type="button">Run All</button></a>
 	</div>
