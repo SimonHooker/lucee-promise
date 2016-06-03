@@ -35,9 +35,10 @@ name: "${label}"
 description: "${description}"
 </echo>
 
-    <!-- copy plugin -->
-    <copy todir="${dist}/extension/applications" failonerror="false">
-      <fileset dir="source/applications"/>
+    <echo file="${dist}/extension/applications/Promise.cfc">component extends='${codename}.Promise' {}</echo>
+
+    <copy todir="${dist}/extension/applications/${codename}" failonerror="false">
+      <fileset dir="source/plugins"/>
     </copy>
 
     <!-- copy the logo -->

@@ -2,11 +2,11 @@ component extends='testbox.system.BaseSpec' {
 
 	function run() {
 
-		describe( 'Promise.cfc' , function() {
+		describe( 'Response.cfc' , function() {
 
 			it( 'has expected keys which are functions' , function() {
 
-				var actual = new source.applications.PromiseResponse();
+				var actual = new source.Response();
 
 				expect( actual ).toBeStruct();
 
