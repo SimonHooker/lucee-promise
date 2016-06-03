@@ -1,0 +1,8 @@
+{
+    "dependencies":{
+        "testbox":"2.3.0+00044"
+    },
+    "installPaths":{
+        "testbox":"testbox"
+    }
+}
