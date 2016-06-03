@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="all" basedir="." name="Lucee extension">
+  <import file="build-modern.xml"/>
+
+  <target name="info" description="outputs information about all posible building options">
+    <echo>You have the following building options, call:</echo>
+    <echo>   "ant all" (default) to build modern extension</echo>
+  </target>
+  
+
+  <target name="all" depends="buildModern,clean" description="builds modern extension"></target>
+
+
+  <target name="clean" description="clean up">
+    <delete dir="${temp}"/>
+    <delete dir="${dist}/extension2"/>
+  </target>
+</project>

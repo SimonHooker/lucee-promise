@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="compile" basedir=".">
+	<description>
+        Build Extension - Compile
+    </description>
+    <!-- set global properties for this build -->
+
+  <property file="build.properties"/>
+
+  <property name="lib" location="source/java/lib"/>
+  <property name="src" location="source/java/src"/>
+  <property name="temp" location="temp"/>
+  <property name="dist"  location="dist"/>
+
+  <buildnumber file="build.number"/>
+
+  <path id="classpath">
+    <fileset dir="${lib}">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
+
+  <target name="init">
+  	
+    <!-- Create the time stamp -->
+    <tstamp/>
+    
+    <delete dir="${temp}"/>
+    <delete dir="${dist}"/>
+
+    <mkdir dir="${dist}"/>
+
+    <tstamp>
+     <format property="NOW" pattern="yyyy-MM-dd HH:mm:ss" />
+    </tstamp>
+  </target>
+  
+</project>
