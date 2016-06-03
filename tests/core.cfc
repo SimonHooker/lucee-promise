@@ -33,7 +33,7 @@ component extends='testbox.system.BaseSpec' {
 				} );
 
 				expect( actual ).toBeTypeOf( 'component' );
-				expect( actual ).toBeInstanceOf( 'source.Response' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
 
 			} );
 
@@ -49,7 +49,7 @@ component extends='testbox.system.BaseSpec' {
 				var actual = Promise::all();
 
 				expect( actual ).toBeTypeOf( 'component' );
-				expect( actual ).toBeInstanceOf( 'source.Response' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
 
 			} );
 
@@ -64,7 +64,7 @@ component extends='testbox.system.BaseSpec' {
 				var actual = Promise::race();
 
 				expect( actual ).toBeTypeOf( 'component' );
-				expect( actual ).toBeInstanceOf( 'source.Response' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
 
 			} );
 
@@ -79,7 +79,7 @@ component extends='testbox.system.BaseSpec' {
 				var actual = Promise::resolve();
 
 				expect( actual ).toBeTypeOf( 'component' );
-				expect( actual ).toBeInstanceOf( 'source.Response' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
 
 
 			} );
@@ -95,7 +95,7 @@ component extends='testbox.system.BaseSpec' {
 				var actual = Promise::reject();
 
 				expect( actual ).toBeTypeOf( 'component' );
-				expect( actual ).toBeInstanceOf( 'source.Response' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
 
 
 			} );

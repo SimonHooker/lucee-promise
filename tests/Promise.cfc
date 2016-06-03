@@ -1,1 +1,1 @@
-component extends='source.Promise' {}
+component extends='source.plugins.Promise' {}

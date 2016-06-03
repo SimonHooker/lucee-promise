@@ -2,12 +2,13 @@ component extends='testbox.system.BaseSpec' {
 
 	function run() {
 
-		describe( 'Response.cfc' , function() {
+		describe( 'Reject.cfc' , function() {
 
 			it( 'has expected keys which are functions' , function() {
 
-				var actual = new source.plugins.Response();
+				var actual = new source.plugins.Reject();
 
+				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
 				expect( actual ).toBeStruct();
 
 				expect( actual ).toHaveKey( 'then' );
