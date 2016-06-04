@@ -4,9 +4,9 @@ component extends='testbox.system.BaseSpec' {
 
 		describe( 'Response.cfc' , function() {
 
-			it( 'has expected keys which are functions' , function() {
+			it( 'has expected keys which are functions with a null value' , function() {
 
-				var actual = new source.plugins.Response();
+				var actual = new source.plugins.Response( function() {} );
 
 				expect( actual ).toBeStruct();
 
@@ -16,8 +16,12 @@ component extends='testbox.system.BaseSpec' {
 				expect( actual ).toHaveKey( 'catch' );
 				expect( actual.catch ).toBeTypeOf( 'function' );
 
-			} );
+				expect( actual ).toHaveKey( 'value' );
+				expect( actual.value ).toBeTypeOf( 'function' );
 
+				expect( actual.value() ).toBeNull();
+
+			} );
 
 		});
 

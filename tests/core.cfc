@@ -10,7 +10,7 @@ component extends='testbox.system.BaseSpec' {
 
 					new Promise();
 
-				} ).toThrow( 'Promise.init.missing_first_argument' );
+				} ).toThrow( 'expression' );
 
 			} );
 
@@ -20,17 +20,43 @@ component extends='testbox.system.BaseSpec' {
 
 					new Promise( 'test' );
 
-				} ).toThrow( 'Promise.init.first_argument_must_be_a_callback_function' );
+				} ).toThrow( 'expression' );
 
 			} );
 
 			it( 'throws an error if the promise does not resolve or reject' , function() {
 
-				expect( function() {
 
-					new Promise( function( resolve , reject ) {} );
+				var actual = new Promise( function( resolve , reject ) {} );
 
-				} ).toThrow( 'Promise.init.not_resolved_or_rejected' );
+				expect( actual ).toBeTypeOf( 'component' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
+
+			} );
+
+			it( 'returns a Resolve when the callback hits resolve' , function() {
+
+				var actual = new Promise( function( resolve , reject ) {
+
+					resolve( 'resolved' );
+
+				} );
+
+				expect( actual ).toBeTypeOf( 'component' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
+
+			} );
+
+			it( 'returns a Reject when the callback hits reject' , function() {
+
+				var actual = new Promise( function( resolve , reject ) {
+
+					reject( 'rejected' );
+
+				} );
+
+				expect( actual ).toBeTypeOf( 'component' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
 
 			} );
 
