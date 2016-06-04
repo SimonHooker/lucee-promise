@@ -71,12 +71,26 @@ component {
 
 	}
 
-/*
 	public static function all(
 		required array iteratable
 	) {
-		return new Response( function() {} );
+
+		var input = arguments.iteratable;
+
+		return new Promise( function( resolve , reject ) {
+
+			resolve(
+				input
+					.map( function( resolve_me ) {
+						return resolve_me.value();
+					} )
+			);
+
+		} );
+
 	}
+
+/*
 
 	public static function race(
 		required array iteratable

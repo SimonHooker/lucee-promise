@@ -286,10 +286,10 @@ component extends='testbox.system.BaseSpec' {
 			} );
 
 		});
-/*
+
 		describe( 'Promise::all' , function() {
 
-			it( 'to be a function that returns a Response' , function() {
+			it( 'to be a function that returns a Promise' , function() {
 
 				expect( Promise::all ).toBeTypeOf( 'function' );
 
@@ -298,10 +298,53 @@ component extends='testbox.system.BaseSpec' {
 				expect( actual ).toBeTypeOf( 'component' );
 				expect( actual ).toBeInstanceOf( 'source.plugins.Promise' );
 
+				var actual_value = actual.value();
+
+				expect( actual_value ).toBeArray();
+				expect( actual_value ).toHaveLength( 0 );
+
+			} );
+
+			it( 'returns values from resolved promises in the order they were provided' , function() {
+
+				var start_ms = GetTickCount();
+				var actual = Promise::all( [
+					Promise::resolve( 'quick 1' ),
+					new Promise( function( resolve , reject ) {
+						sleep( 1000 );
+						resolve( 'slow 1' );
+					} ),
+					Promise::resolve( 'quick 2' ),
+					new Promise( function( resolve , reject ) {
+						sleep( 500 );
+						resolve( 'slow 2' );
+					} ),
+					Promise::resolve( 'quick 3' )
+				] );
+
+
+				var actual_value = actual.value();
+
+				expect( actual_value ).toBeArray();
+				expect( actual_value ).toHaveLength( 5 );
+				expect( actual_value ).toBe( [
+					'quick 1',
+					'slow 1',
+					'quick 2',
+					'slow 2',
+					'quick 3'
+				] );
+
+				// This will just prove that the threads are executed in series instead of parallel
+				var time_taken = GetTickCount() - start_ms;
+				expect( time_taken ).toBeGT( 999 ); // Slowest thread is 1000 ms
+				expect( time_taken ).toBeLT( 1400 ); // If in parallel, should be at least 1500ms wait
+
 			} );
 
 		} );
 
+/*
 		describe( 'Promise::race' , function() {
 
 			it( 'to be a function that returns a Response' , function() {
