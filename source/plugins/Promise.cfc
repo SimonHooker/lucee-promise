@@ -52,22 +52,26 @@ component {
 
 	public function value() {
 
-		thread
-			name = this.thread_name
-			action = 'join';
+		if ( !IsDefined( 'this.thread_response' ) ) {
 
-		var thread_response = cfthread[ this.thread_name ];
+			thread
+				name = this.thread_name
+				action = 'join';
 
-		if ( !( thread_response.success ?: true ) ) {
+			this.thread_response = cfthread[ this.thread_name ];
+
+		}
+
+		if ( !( this.thread_response.success ?: true ) ) {
 
 			throw( 
 				type = 'Promise.rejected',
-				message = thread_response.value ?: ''
+				message = this.thread_response.value ?: ''
 			);
 
 		}
 
-		return thread_response.value ?: NullValue();
+		return this.thread_response.value ?: NullValue();
 
 	}
 
@@ -95,6 +99,7 @@ component {
 					var response = input.map( function( resolve_me ) {
 						return resolve_me.value();
 					} );
+					return Promise::resolve( response );
 				},
 				function( data ) {
 					return Promise::reject( data );
