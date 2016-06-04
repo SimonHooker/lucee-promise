@@ -359,6 +359,26 @@ component extends='testbox.system.BaseSpec' {
 
 			} );
 
+			it( 'rejects if anything rejects' , function() {
+
+				var actual = Promise::all( [
+						Promise::resolve( 'promise 1' ),
+						Promise::reject( 'reject 1' )
+					] )
+					.then(
+						function() {
+							fail( 'Not expected to run the onFulfilled method' );
+						},
+						function( error ) {
+							expect( arguments.error ).toBe( 'reject 1' );
+							return arguments.error;
+						}
+					);
+
+				expect( actual ).toBe( 'reject 1' );
+
+			} );
+
 		} );
 
 /*

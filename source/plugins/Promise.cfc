@@ -84,11 +84,14 @@ component {
 
 		return new Promise( function( resolve , reject ) {
 
-			resolve(
-				input.map( function( resolve_me ) {
-					return arguments.resolve_me.value();
-				} )
-			);
+			var response = input.map( function( resolve_me ) {
+				return arguments.resolve_me
+					.catch( function( error ) {
+						reject( error );
+					} );
+			} );
+
+			resolve( response );
 
 		} );
 
