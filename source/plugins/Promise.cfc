@@ -8,7 +8,11 @@ component {
 
 		fire_off_callback( arguments.callback );
 
-		return this;
+		this.return_structure = {
+			value: this
+		};
+
+		return this.return_structure.value;
 
 	}
 
@@ -16,6 +20,16 @@ component {
 		function onFulfilled , 
 		function onRejected 
 	) {
+		arguments.onFulfilled = arguments.onFulfilled ?: function( data ) {
+			return arguments.data;
+		};
+
+		arguments.onRejected = arguments.onRejected ?: function( data ) {
+			throw( 
+				type = 'Promise.rejected',
+				message = arguments.data
+			);
+		};
 
 		try {
 			var response_value = this.value(); 
