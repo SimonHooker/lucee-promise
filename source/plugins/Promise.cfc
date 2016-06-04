@@ -106,56 +106,35 @@ component {
 		}
 
 		var race_thread_id = CreateUUID();
-		var winner_has_been_found = false;
-		var first_answer = '';
-		var first_answer_resolved = true;
+
+		var promise_thread_ids = arguments.iteratable.map( function( resolve_me ) {
+			return resolve_me.thread_name;
+		} );
 
 		thread
 			name = race_thread_id
+			promise_thread_ids = promise_thread_ids
 			action = 'run'
 			{
-				sleep( 3600000 );
+				var number_of_threads = attributes.promise_thread_ids.len();
+
+				for( var i = 1; i <= number_of_threads; i++ ) {
+
+					switch( cfthread[ attributes.promise_thread_ids[ i ] ].status ) {
+						case 'COMPLETED':
+							var winning_thread = cfthread[ attributes.promise_thread_ids[ i ] ];
+							thread.success = winning_thread.success;
+							thread.value = winning_thread.value;
+							abort;
+							break;
+					}
+
+					sleep( 10 );
+					if ( i == number_of_threads ) {
+						i = 0;
+					}
+				}
 			}
-
-		arguments.iteratable.each( function( resolve_me ) {
-
-			arguments.resolve_me
-				.then( 
-					function( data ) {
-						if ( winner_has_been_found ) {
-							return Promise::reject( 'not a winner' );
-						}
-						winner_has_been_found = true;
-
-						return Promise::resolve({
-							resolved: true,
-							value: data
-						});
-					},
-					function( data ) {
-						if ( winner_has_been_found ) {
-							return Promise::reject( 'not a winner' );
-						}
-						winner_has_been_found = true;
-
-						return Promise::resolve({
-							resolved: false,
-							value: data
-						});
-					} 
-				)
-				.then( 
-					function( data ) {
-						thread
-							name = race_thread_id
-							action = 'terminate';
-
-						first_answer = data;
-					},
-					function() {}
-				);
-
-		} );
 
 		return new Promise( function( resolve , reject ) {
 
@@ -163,10 +142,10 @@ component {
 				name = race_thread_id
 				action = 'join';
 
-			if ( first_answer.resolved ) {
-				resolve( first_answer.value );
+			if ( cfthread[ race_thread_id ].success ) {
+				resolve( cfthread[ race_thread_id ].value );
 			} else {
-				reject( first_answer.value );
+				reject( cfthread[ race_thread_id ].value );
 			}
 
 		} );

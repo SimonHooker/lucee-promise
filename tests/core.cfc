@@ -39,6 +39,9 @@ component extends='testbox.system.BaseSpec' {
 				expect( actual ).toHaveKey( 'value' );
 				expect( actual.value ).toBeTypeOf( 'function' );
 
+				expect( actual ).toHaveKey( 'thread_name' );
+				expect( actual.thread_name ).toBeTypeOf( 'string' );
+
 				expect( actual.value() ).toBeNull();
 
 			} );
