@@ -75,15 +75,19 @@ component {
 		required array iteratable
 	) {
 
-		var input = arguments.iteratable;
+		var input = arguments.iteratable.map( function( resolve_me ) {
+			if ( IsInstanceOf( arguments.resolve_me , 'Promise' ) ) {
+				return arguments.resolve_me;
+			}
+			return Promise::resolve( arguments.resolve_me );
+		} );
 
 		return new Promise( function( resolve , reject ) {
 
 			resolve(
-				input
-					.map( function( resolve_me ) {
-						return resolve_me.value();
-					} )
+				input.map( function( resolve_me ) {
+					return arguments.resolve_me.value();
+				} )
 			);
 
 		} );

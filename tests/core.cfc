@@ -342,6 +342,23 @@ component extends='testbox.system.BaseSpec' {
 
 			} );
 
+			it( 'converts non-promises within the array to one and resolves' , function() {
+
+				var actual = Promise::all( [
+						Promise::resolve( 'promise 1' ),
+						'not a promise',
+						Promise::resolve( 'promise 2' )
+					] )
+					.value();
+
+				expect( actual ).toBe( [
+					'promise 1',
+					'not a promise',
+					'promise 2'
+				] );
+
+			} );
+
 		} );
 
 /*
