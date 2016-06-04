@@ -17,3 +17,12 @@ The syntax for lucee-promise is very similar to Javascript promises.  Documentat
 * Instead of `Promise.race( [ ] )` you must use `Promise::race( [ ] )`
 
 If you have any questions feel free to look me up on CFML Slack or anywhere you find me.  The tests are also worth checking for some code examples, in particular [/tests/core.cfc](https://github.com/SimonHooker/lucee-promise/blob/master/tests/core.cfc)
+
+## Supported methods
+
+* Promise.prototype.then( function( data ) {} , function( error_message ) {} )
+* Promise.prototype.catch( function( error_message ) {} )
+* Promise.all( array_of_promises_and_values )
+* Promise.race( array_of_promises )
+* Promise.resolve( value_to_return )
+* Promise.reject( error_message )
