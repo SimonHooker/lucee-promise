@@ -24,17 +24,26 @@ component extends='testbox.system.BaseSpec' {
 
 			} );
 
-			it( 'throws an error if the promise does not resolve or reject' , function() {
+			it( 'has expected keys which are functions with a null value' , function() {
 
+				var actual = new Promise( function() {} );
 
-				var actual = new Promise( function( resolve , reject ) {} );
+				expect( actual ).toBeStruct();
 
-				expect( actual ).toBeTypeOf( 'component' );
-				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
+				expect( actual ).toHaveKey( 'then' );
+				expect( actual.then ).toBeTypeOf( 'function' );
+
+				expect( actual ).toHaveKey( 'catch' );
+				expect( actual.catch ).toBeTypeOf( 'function' );
+
+				expect( actual ).toHaveKey( 'value' );
+				expect( actual.value ).toBeTypeOf( 'function' );
+
+				expect( actual.value() ).toBeNull();
 
 			} );
 
-			it( 'returns a Resolve when the callback hits resolve' , function() {
+			it( 'returns a value when the callback hits resolve' , function() {
 
 				var actual = new Promise( function( resolve , reject ) {
 
@@ -43,11 +52,13 @@ component extends='testbox.system.BaseSpec' {
 				} );
 
 				expect( actual ).toBeTypeOf( 'component' );
-				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Promise' );
+				expect( actual.value() ).toBe( 'resolved' );
 
 			} );
 
-			it( 'returns a Reject when the callback hits reject' , function() {
+			it( 'throws an error when the callback hits reject' , function() {
+
 
 				var actual = new Promise( function( resolve , reject ) {
 
@@ -56,23 +67,39 @@ component extends='testbox.system.BaseSpec' {
 				} );
 
 				expect( actual ).toBeTypeOf( 'component' );
-				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Promise' );
+
+				try {
+
+					actual.value();
+
+					fail( 'Value on a rejected promise not throwing expected error' );
+
+				} catch ( Promise.rejected e ) {
+
+					expect( e.message ).toBe( 'rejected' );
+
+				} catch ( any e ) {
+
+					fail( 'Value on a rejected promise not throwing expected error' );
+
+				}
 
 			} );
 
 
 		});
-
+/*
 		describe( 'Promise::all' , function() {
 
 			it( 'to be a function that returns a Response' , function() {
 
 				expect( Promise::all ).toBeTypeOf( 'function' );
 
-				var actual = Promise::all();
+				var actual = Promise::all( [] );
 
 				expect( actual ).toBeTypeOf( 'component' );
-				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Promise' );
 
 			} );
 
@@ -84,25 +111,28 @@ component extends='testbox.system.BaseSpec' {
 
 				expect( Promise::race ).toBeTypeOf( 'function' );
 
-				var actual = Promise::race();
+				var actual = Promise::race( [] );
 
 				expect( actual ).toBeTypeOf( 'component' );
-				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Promise' );
 
 			} );
 
 		} );
+*/
 
 		describe( 'Promise::resolve' , function() {
 
-			it( 'to be a function that returns a Response' , function() {
+			it( 'to be a function that returns a Promise' , function() {
 
 				expect( Promise::resolve ).toBeTypeOf( 'function' );
 
-				var actual = Promise::resolve();
+				var actual = Promise::resolve( 'resolved value' );
 
 				expect( actual ).toBeTypeOf( 'component' );
-				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Promise' );
+
+				expect( actual.value() ).toBe( 'resolved value' );
 
 
 			} );
@@ -111,20 +141,35 @@ component extends='testbox.system.BaseSpec' {
 
 		describe( 'Promise::reject' , function() {
 
-			it( 'to be a function that returns a Response' , function() {
+			it( 'to be a function that returns a Promise' , function() {
 
 				expect( Promise::reject ).toBeTypeOf( 'function' );
 
-				var actual = Promise::reject();
+				var actual = Promise::reject( 'something funky' );
 
 				expect( actual ).toBeTypeOf( 'component' );
-				expect( actual ).toBeInstanceOf( 'source.plugins.Response' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Promise' );
 
+
+				try {
+
+					actual.value();
+
+					fail( 'Value on a rejected promise not throwing expected error' );
+
+				} catch ( Promise.rejected e ) {
+
+					expect( e.message ).toBe( 'something funky' );
+
+				} catch ( any e ) {
+
+					fail( 'Value on a rejected promise not throwing expected error' );
+
+				}
 
 			} );
 
 		} );
-
 
 	}
 
