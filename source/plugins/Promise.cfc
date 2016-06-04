@@ -12,13 +12,21 @@ component {
 
 	}
 
-	public function then() {
+	public function then( 
+		function onFulfilled , 
+		function onRejected 
+	) {
+
 
 	}
 
-	public function catch() {
 
-
+	public function catch(
+		function onRejected
+	) {
+		return then(
+			argumentCollection = arguments
+		);
 	}
 
 	public function value() {
