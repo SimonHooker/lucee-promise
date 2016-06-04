@@ -87,6 +87,45 @@ component extends='testbox.system.BaseSpec' {
 
 			} );
 
+			describe( '.then' , function() {
+
+				it( 'hits onFulfilled and returns a value after a resolved promise with data' , function() {
+
+					var actual = Promise::resolve( 'onfulfilled data' )
+						.then(
+							function( data ) {
+								expect( arguments.data ).toBe( 'onfulfilled data' );
+								return arguments.data;
+							},
+							function() {
+								fail( 'Not expected to run the onRejected method' );
+							}
+						);
+
+					expect( actual ).toBe( 'onfulfilled data' );
+
+				} );
+
+				it( 'hits onRejected and returns a value after a resolved promise with data' , function() {
+
+					var actual = Promise::reject( 'onrejected message' )
+						.then(
+							function() {
+								fail( 'Not expected to run the onFulfilled method' );
+							},
+							function( error ) {
+								expect( arguments.error ).toBe( 'onrejected message' );
+								return arguments.error;
+							}
+						);
+
+					expect( actual ).toBe( 'onrejected message' );
+
+				} );
+
+
+			} );
+
 
 		});
 /*

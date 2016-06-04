@@ -17,6 +17,13 @@ component {
 		function onRejected 
 	) {
 
+		try {
+			var response_value = this.value(); 
+		} catch ( Promise.rejected e ) {
+			return arguments.onRejected( e.message );
+		}
+
+		return arguments.onFulfilled( response_value );
 
 	}
 
