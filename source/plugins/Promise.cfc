@@ -105,7 +105,71 @@ component {
 			throw( type = 'Promise.race_is_empty' );
 		}
 
-		return Promise::resolve( arguments.iteratable[1].value() );
+		var race_thread_id = CreateUUID();
+		var winner_has_been_found = false;
+		var first_answer = '';
+		var first_answer_resolved = true;
+
+		thread
+			name = race_thread_id
+			action = 'run'
+			{
+				sleep( 3600000 );
+			}
+
+		arguments.iteratable.each( function( resolve_me ) {
+
+			arguments.resolve_me
+				.then( 
+					function( data ) {
+						if ( winner_has_been_found ) {
+							return Promise::reject( 'not a winner' );
+						}
+						winner_has_been_found = true;
+
+						return Promise::resolve({
+							resolved: true,
+							value: data
+						});
+					},
+					function( data ) {
+						if ( winner_has_been_found ) {
+							return Promise::reject( 'not a winner' );
+						}
+						winner_has_been_found = true;
+
+						return Promise::resolve({
+							resolved: false,
+							value: data
+						});
+					} 
+				)
+				.then( 
+					function( data ) {
+						thread
+							name = race_thread_id
+							action = 'terminate';
+
+						first_answer = data;
+					},
+					function() {}
+				);
+
+		} );
+
+		return new Promise( function( resolve , reject ) {
+
+			thread
+				name = race_thread_id
+				action = 'join';
+
+			if ( first_answer.resolved ) {
+				resolve( first_answer.value );
+			} else {
+				reject( first_answer.value );
+			}
+
+		} );
 
 	}
 
@@ -132,6 +196,7 @@ component {
 		} );
 
 	}
+
 
 	private function fire_off_callback(
 		required function callback
