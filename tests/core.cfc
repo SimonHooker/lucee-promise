@@ -287,6 +287,87 @@ component extends='testbox.system.BaseSpec' {
 
 		});
 
+		describe( 'Promise::race' , function() {
+
+
+			it( 'to be a function that returns a Promise' , function() {
+
+				expect( Promise::race ).toBeTypeOf( 'function' );
+
+				var actual = Promise::race( [
+					Promise::resolve( 'speed racer' )
+				] );
+
+				expect( actual ).toBeTypeOf( 'component' );
+				expect( actual ).toBeInstanceOf( 'source.plugins.Promise' );
+
+				var actual_value = actual.value();
+				expect( actual_value ).toBe( 'speed racer' );
+
+			} );
+
+			it( 'throws an error if the array is empty' , function() {
+
+				try {
+
+					Promise::race( [] );
+
+					fail( 'Race not failing with an empty array' )
+
+				} catch ( Promise.race_is_empty e ) {
+
+					// Working ok
+
+				} catch ( any e ) {
+
+					fail( 'Error thrown by empty error not as expected' );
+
+				}
+
+			} );
+
+			it( 'returns the first element to resolve' , function() {
+
+				var start_ms = GetTickCount();
+
+				var actual = Promise::race( [
+						Promise::resolve( 'quick' ),
+						new Promise( function( resolve , reject ) {
+							sleep( 100 );
+							resolve( 'slow' );
+						} )
+					] )
+					.value();
+
+				var time_taken = GetTickCount() - start_ms;
+				expect( time_taken ).toBeLT( 99 );
+
+				expect( actual ).toBe( 'quick' );
+
+			} );
+
+			it( 'returns the fastest element to resolve' , function() {
+
+				var start_ms = GetTickCount();
+
+				var actual = Promise::race( [
+						new Promise( function( resolve , reject ) {
+							sleep( 100 );
+							resolve( 'slow' );
+						} ),
+						Promise::resolve( 'quick' )
+					] )
+					.value();
+
+				var time_taken = GetTickCount() - start_ms;
+				expect( time_taken ).toBeLT( 99 );
+
+				expect( actual ).toBe( 'quick' );
+
+			} );
+
+		} );
+
 		describe( 'Promise::all' , function() {
 
 			it( 'to be a function that returns a Promise' , function() {

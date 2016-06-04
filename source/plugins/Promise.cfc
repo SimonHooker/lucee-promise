@@ -97,16 +97,19 @@ component {
 
 	}
 
-/*
-
 	public static function race(
 		required array iteratable
 	) {
-		return new Response( function() {} );
+
+		if ( arguments.iteratable.len() == 0 ) {
+			throw( type = 'Promise.race_is_empty' );
+		}
+
+		return Promise::resolve( arguments.iteratable[1].value() );
+
 	}
 
-*/
-	public static function resolve( data ) {
+	public static function resolve( required data ) {
 
 		var args = arguments;
 
@@ -118,7 +121,7 @@ component {
 
 	}
 
-	public static function reject( data ) {
+	public static function reject( required data ) {
 
 		var args = arguments;
 
@@ -129,8 +132,6 @@ component {
 		} );
 
 	}
-
-
 
 	private function fire_off_callback(
 		required function callback
