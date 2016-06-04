@@ -379,6 +379,40 @@ component extends='testbox.system.BaseSpec' {
 
 			} );
 
+			it( 'rejects with the fastest rejection' , function() {
+
+				var start_ms = GetTickCount();
+
+				var actual = Promise::all( [
+						new Promise( function( resolve , reject ) {
+							sleep( 500 );
+							reject( 'slept for 500' );
+						} ),
+						new Promise( function( resolve , reject ) {
+							sleep( 100 );
+							reject( 'slept for 100' );
+						} )
+					] )
+					.then(
+						function() {
+							fail( 'Not expected to run the onFulfilled method' );
+						},
+						function( error ) {
+							expect( arguments.error ).toBe( 'slept for 100' );
+							return arguments.error;
+						}
+					);
+
+				var time_taken = GetTickCount() - start_ms;
+				expect( time_taken ).toBeGT( 99 );
+				expect( time_taken ).toBeLT( 200 ); 
+
+
+
+				expect( actual ).toBe( 'slept for 100' );
+
+			} );
+
 		} );
 
 /*
