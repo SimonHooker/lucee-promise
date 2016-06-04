@@ -74,6 +74,9 @@ component {
 	public static function all(
 		required array iteratable
 	) {
+		if ( arguments.iteratable.len() == 0 ) {
+			return Promise::resolve( [] );
+		}
 
 		var input = arguments.iteratable.map( function( resolve_me ) {
 			if ( IsInstanceOf( arguments.resolve_me , 'Promise' ) ) {
@@ -82,23 +85,28 @@ component {
 			return Promise::resolve( arguments.resolve_me );
 		} );
 
-		return new Promise( function( resolve , reject ) {
-
-			var response = input.map( function( resolve_me ) {
-				return arguments.resolve_me
-					.catch( function( error ) {
-						reject( error );
+		// Race to the end in case there is an error
+		return Promise::race( 
+				iteratable = input , 
+				only_declare_rejection_the_winner = true 
+			)
+			.then(
+				function( data ) {
+					var response = input.map( function( resolve_me ) {
+						return resolve_me.value();
 					} );
-			} );
+				},
+				function( data ) {
+					return Promise::reject( data );
+				}
+			);
 
-			resolve( response );
-
-		} );
 
 	}
 
 	public static function race(
-		required array iteratable
+		required array iteratable,
+		boolean only_declare_rejection_the_winner = false
 	) {
 
 		if ( arguments.iteratable.len() == 0 ) {
@@ -115,21 +123,41 @@ component {
 			name = race_thread_id
 			promise_thread_ids = promise_thread_ids
 			action = 'run'
+			only_declare_rejection_the_winner = arguments.only_declare_rejection_the_winner
 			{
 				var number_of_threads = attributes.promise_thread_ids.len();
+				var have_completed = [];
 
 				for( var i = 1; i <= number_of_threads; i++ ) {
 
-					switch( cfthread[ attributes.promise_thread_ids[ i ] ].status ) {
-						case 'COMPLETED':
-							var winning_thread = cfthread[ attributes.promise_thread_ids[ i ] ];
-							thread.success = winning_thread.success;
-							thread.value = winning_thread.value;
-							abort;
-							break;
+					if ( !have_completed.find( attributes.promise_thread_ids[ i ] ) ) {
+
+						switch( cfthread[ attributes.promise_thread_ids[ i ] ].status ) {
+							case 'COMPLETED':
+								have_completed.add( attributes.promise_thread_ids[ i ] );
+								var winning_thread = cfthread[ attributes.promise_thread_ids[ i ] ];
+								if (
+									!attributes.only_declare_rejection_the_winner
+									||
+									!winning_thread.success
+								) {
+									thread.success = winning_thread.success;
+									thread.value = winning_thread.value;
+									abort;
+									break;
+								}
+
+								if ( have_completed.len() >= number_of_threads ) {
+									thread.success = true;
+									thread.value = '';
+									abort;
+								}
+						}
+
+						sleep( 10 );
+
 					}
 
-					sleep( 10 );
 					if ( i == number_of_threads ) {
 						i = 0;
 					}

@@ -369,6 +369,43 @@ component extends='testbox.system.BaseSpec' {
 
 			} );
 
+			it( 'ignores resolves when the reject only flag is true' , function() {
+
+				var start_ms = GetTickCount();
+
+
+				try {
+
+					Promise::race( 
+						iteratable = [
+							Promise::resolve( 'quick resolve' ),
+							new Promise( function( resolve , reject ) {
+								sleep( 100 );
+								reject( 'slow reject' );
+							} )
+						],
+						only_declare_rejection_the_winner = true
+					)
+					.catch();
+
+					fail( 'Race did not reject' );
+
+				} catch ( Promise.rejected e ) {
+
+					expect( e.message ).toBe( 'slow reject' );
+
+				} catch ( any e ) {
+
+					dump( e );
+					fail( 'Race rejected with an unexpected error' );
+
+				}
+
+				var time_taken = GetTickCount() - start_ms;
+				expect( time_taken ).toBeGT( 99 );
+
+			} );
+
 		} );
 
 		describe( 'Promise::all' , function() {
@@ -498,23 +535,6 @@ component extends='testbox.system.BaseSpec' {
 			} );
 
 		} );
-
-/*
-		describe( 'Promise::race' , function() {
-
-			it( 'to be a function that returns a Response' , function() {
-
-				expect( Promise::race ).toBeTypeOf( 'function' );
-
-				var actual = Promise::race( [] );
-
-				expect( actual ).toBeTypeOf( 'component' );
-				expect( actual ).toBeInstanceOf( 'source.plugins.Promise' );
-
-			} );
-
-		} );
-*/
 
 		describe( 'Promise::resolve' , function() {
 
