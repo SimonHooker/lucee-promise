@@ -31,13 +31,32 @@ component {
 			);
 		};
 
+		var return_value;
+
 		try {
-			var response_value = this.value(); 
+
+			try {
+
+				var response_value = this.value(); 
+				return_value = arguments.onFulfilled( response_value );
+
+			} catch ( Promise.rejected e ) {
+
+				return_value = arguments.onRejected( e.message );
+
+			}
+
 		} catch ( Promise.rejected e ) {
-			return arguments.onRejected( e.message );
+
+			rethrow;
+
+		} catch ( any e ) {
+
+			return Promise::reject( e.detail ?: e.message ?: e.type );
+
 		}
 
-		return arguments.onFulfilled( response_value );
+		return return_value;
 
 	}
 
