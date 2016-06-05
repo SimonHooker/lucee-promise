@@ -56,7 +56,13 @@ component {
 
 		}
 
-		return return_value;
+		var return_value = return_value ?: response_value;
+
+		if ( IsInstanceOf( return_value , 'Promise' ) ) {
+			return return_value;
+		}
+
+		return Promise::resolve( return_value );;
 
 	}
 

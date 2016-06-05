@@ -103,7 +103,8 @@ component extends='testbox.system.BaseSpec' {
 							function() {
 								fail( 'Not expected to run the onRejected method' );
 							}
-						);
+						)
+						.value();
 
 					expect( actual ).toBe( 'onfulfilled data' );
 
@@ -114,7 +115,8 @@ component extends='testbox.system.BaseSpec' {
 				it( 'defaults onFulfilled to just return the value from the preceeding promise' , function() {
 
 					var actual = Promise::resolve( 'default onfulfilled data' )
-						.then();
+						.then()
+						.value();
 
 					expect( actual ).toBe( 'default onfulfilled data' );
 
@@ -131,7 +133,8 @@ component extends='testbox.system.BaseSpec' {
 								expect( arguments.error ).toBe( 'onrejected message' );
 								return arguments.error;
 							}
-						);
+						)
+						.value();
 
 					expect( actual ).toBe( 'onrejected message' );
 
@@ -215,7 +218,8 @@ component extends='testbox.system.BaseSpec' {
 								expect( arguments.error ).toBe( 'catch message' );
 								return arguments.error;
 							}
-						);
+						)
+						.value();
 
 					expect( actual ).toBe( 'catch message' );
 
@@ -494,7 +498,8 @@ component extends='testbox.system.BaseSpec' {
 							expect( arguments.error ).toBe( 'reject 1' );
 							return arguments.error;
 						}
-					);
+					)
+					.value();
 
 				expect( actual ).toBe( 'reject 1' );
 
@@ -522,7 +527,8 @@ component extends='testbox.system.BaseSpec' {
 							expect( arguments.error ).toBe( 'slept for 100' );
 							return arguments.error;
 						}
-					);
+					)
+					.value();
 
 				var time_taken = GetTickCount() - start_ms;
 				expect( time_taken ).toBeGT( 99 );
