@@ -87,6 +87,10 @@ component {
 		);
 	}
 
+	public function finally() {
+
+	}
+
 	public function value() {
 
 		if ( !IsDefined( 'this.thread_response' ) ) {
@@ -98,7 +102,7 @@ component {
 			this.thread_response = cfthread[ this.thread_name ];
 			
 		}
-		
+
 		var thread_response_value = this.thread_response.value ?: '';
 
 		if ( !( this.thread_response.success ?: true ) ) {

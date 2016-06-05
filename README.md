@@ -23,6 +23,7 @@ If you have any questions feel free to look me up on CFML Slack or anywhere you 
 * `Promise.prototype.value()` ( mostly used internally, but can be used in the same way as `Promise.prototype.done()` without any onFulfilled or onRejected callbacks )
 * `Promise.prototype.then( function( data ) {} , function( error_message ) {} )`
 * `Promise.prototype.done( function( data ) {} , function( error_message ) {} )`
+* `Promise.prototype.finally( function( data ) {} )`
 * `Promise.prototype.catch( function( error_message ) {} )`
 * `Promise::all( array_of_promises_and_values )`
 * `Promise::race( array_of_promises )`
