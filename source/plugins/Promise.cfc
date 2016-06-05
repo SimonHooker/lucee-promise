@@ -32,16 +32,18 @@ component {
 		};
 
 		var return_value;
+		var response_value;
 
 		try {
 
 			try {
 
-				var response_value = this.value(); 
+				response_value = this.value(); 
 				return_value = arguments.onFulfilled( response_value );
 
 			} catch ( Promise.rejected e ) {
 
+				respponse_value = Promise::reject( e.message );
 				return_value = arguments.onRejected( e.message );
 
 			}
