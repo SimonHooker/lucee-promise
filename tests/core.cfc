@@ -2,7 +2,7 @@ component extends='testbox.system.BaseSpec' {
 
 	function run() {
 
-		describe( 'Promise.cfc' , function() {
+		describe( 'Promise.prototype' , function() {
 
 			it( 'throws an error if the first argument is not provided' , function() {
 
@@ -36,13 +36,17 @@ component extends='testbox.system.BaseSpec' {
 				expect( actual ).toHaveKey( 'catch' );
 				expect( actual.catch ).toBeTypeOf( 'function' );
 
+				expect( actual ).toHaveKey( 'done' );
+				expect( actual.done ).toBeTypeOf( 'function' );
+
 				expect( actual ).toHaveKey( 'value' );
-				expect( actual.value ).toBeTypeOf( 'function' );
+				expect( actual.done ).toBeTypeOf( 'function' );
 
 				expect( actual ).toHaveKey( 'thread_name' );
 				expect( actual.thread_name ).toBeTypeOf( 'string' );
 
-				expect( actual.value() ).toBeNull();
+				expect( actual.value() ).toBe( '' );
+				expect( actual.done() ).toBe( '' );
 
 			} );
 
@@ -56,7 +60,7 @@ component extends='testbox.system.BaseSpec' {
 
 				expect( actual ).toBeTypeOf( 'component' );
 				expect( actual ).toBeInstanceOf( 'source.plugins.Promise' );
-				expect( actual.value() ).toBe( 'resolved' );
+				expect( actual.done() ).toBe( 'resolved' );
 
 			} );
 
@@ -74,7 +78,7 @@ component extends='testbox.system.BaseSpec' {
 
 				try {
 
-					actual.value();
+					actual.done();
 
 					fail( 'Value on a rejected promise not throwing expected error' );
 
@@ -104,7 +108,7 @@ component extends='testbox.system.BaseSpec' {
 								fail( 'Not expected to run the onRejected method' );
 							}
 						)
-						.value();
+						.done();
 
 					expect( actual ).toBe( 'onfulfilled data' );
 
@@ -116,7 +120,7 @@ component extends='testbox.system.BaseSpec' {
 
 					var actual = Promise::resolve( 'default onfulfilled data' )
 						.then()
-						.value();
+						.done();
 
 					expect( actual ).toBe( 'default onfulfilled data' );
 
@@ -134,7 +138,7 @@ component extends='testbox.system.BaseSpec' {
 								return arguments.error;
 							}
 						)
-						.value();
+						.done();
 
 					expect( actual ).toBe( 'onrejected message' );
 
@@ -194,7 +198,7 @@ component extends='testbox.system.BaseSpec' {
 							}
 						);
 
-					var actual_value = actual.value();
+					var actual_value = actual.done();
 
 					expect( actual_value ).toBeArray();
 					expect( actual_value ).toHaveLength( 5 )
@@ -205,6 +209,144 @@ component extends='testbox.system.BaseSpec' {
 
 				} );
 
+				describe( 'onFulfilled' , function() {
+
+					it( 'must return Promise::resolve( return ) when it returns a non-promise' , function() {
+
+						Promise::resolve( 'resolve 1' )
+						.then(
+							function( data ) {
+								return 'resolve 2';
+							},
+							function( error_message ) {
+								fail( 'Should not hit rejected' );
+							}
+						)
+						.then(
+							function( data ) {
+								expect( data ).toBe( 'resolve 2' );
+							},
+							function( error_message ) {
+								fail( 'Should not hit rejected' );
+							}
+						);
+
+					} );
+
+					it( 'must return Promise::resolve( data ) when it does not return a value' , function() {
+						Promise::resolve( 'resolve 1' )
+						.then(
+							function( data ) {
+								// Nothing much happening
+							},
+							function( error_message ) {
+								fail( 'Should not hit rejected' );
+							}
+						)
+						.then(
+							function( data ) {
+								expect( data ).toBe( 'resolve 1' );
+							},
+							function( error_message ) {
+								fail( 'Should not hit rejected' );
+							}
+						);
+					} );
+
+					it( 'must return Promise::reject( error_reason ) if it throws an error' , function() {
+
+						Promise::resolve( 'resolve 1' )
+						.then(
+							function( data ) {
+								throw( message = 'onfulfilled throw 1' );
+							},
+							function( error_message ) {
+								fail( 'Should not hit rejected' );
+							}
+						)
+						.then(
+							function( data ) {
+								fail( 'Should not hit resolved' );
+							},
+							function( error_message ) {
+								expect( error_message ).toBe( 'onfulfilled throw 1' );
+							}
+						);
+
+					} );
+
+				} );
+
+				describe( 'onRejected' , function() {
+
+
+					it( 'must return Promise::resolve( return ) when it returns a non-promise' , function() {
+
+						Promise::reject( 'reject 1' )
+						.then(
+							function( data ) {
+								fail( 'Should not hit resolved' );
+							},
+							function( error_message ) {
+								return 'resolve 1';
+							}
+						)
+						.then(
+							function( data ) {
+								expect( data ).toBe( 'resolve 1' );
+							},
+							function( error_message ) {
+								fail( 'Should not hit rejected' );
+							}
+						);
+
+					} );
+
+					it( 'must return Promise::reject( data ) when it does not return a value' , function() {
+
+						Promise::reject( 'reject 1' )
+						.then(
+							function( data ) {
+								fail( 'Should not hit resolved' );
+							},
+							function( error_message ) {
+								// Nothing much going on here
+							}
+						)
+						.then(
+							function( data ) {
+								fail( 'Should not hit resolved' );
+							},
+							function( error_message ) {
+								expect( error_message ).toBe( 'reject 1' )
+							}
+						);
+
+					} );
+
+					it( 'must return Promise::reject( error_reason ) if it throws an error' , function() {
+
+						Promise::reject( 'reject 1' )
+						.then(
+							function( data ) {
+								fail( 'Should not hit resolved' );
+							},
+							function( error_message ) {
+								throw( message = 'onrejected throw 1' );
+							}
+						)
+						.then(
+							function( data ) {
+								fail( 'Should not hit resolved' );
+							},
+							function( error_message ) {
+								expect( error_message ).toBe( 'onrejected throw 1' );
+							}
+						);
+
+					} );
+
+				} );
 
 			} );
 
@@ -219,7 +361,7 @@ component extends='testbox.system.BaseSpec' {
 								return arguments.error;
 							}
 						)
-						.value();
+						.done();
 
 					expect( actual ).toBe( 'catch message' );
 
@@ -278,7 +420,7 @@ component extends='testbox.system.BaseSpec' {
 							}
 						);
 
-					var actual_value = actual.value();
+					var actual_value = actual.done();
 
 					expect( actual_value ).toBeArray();
 					expect( actual_value ).toHaveLength( 5 )
@@ -289,6 +431,97 @@ component extends='testbox.system.BaseSpec' {
 
 				} );
 
+
+			} );
+
+
+			describe( '.done' , function() {
+
+				it( 'returns null value if used on a promise that has no value' , function() {
+
+					var actual = new Promise( function() {} );
+
+					expect( actual.done() ).toBe( '' );
+
+				});
+
+				describe( 'on resolve' , function() {
+
+					it( 'returns a value without callback' , function() {
+
+						var actual = Promise::resolve( 'resolve value' )
+							.done();
+
+						expect( actual ).toBe( 'resolve value' );
+
+					} );
+
+					it( 'hits onfulfilled and returns the value' , function() {
+
+
+						var actual = Promise::resolve( 'resolve value' )
+							.done(
+								function( error_message ) {
+									expect( error_message ).toBe( 'resolve value' );
+									return 'done value';
+								},
+								function(){
+
+									fail( 'Not expected to hit onrejected' );
+
+								}
+							);
+
+						expect( actual ).toBe( 'done value' );
+
+					} );
+
+				} );
+
+				describe( 'on reject' , function() {
+
+					it( 'throws an error without callback' , function() {
+
+						try {
+
+							Promise::reject( 'reject value' )
+								.done();
+
+							fail( 'Value on a rejected promise not throwing expected error' );
+
+						} catch ( Promise.rejected e ) {
+
+							expect( e.message ).toBe( 'reject value' );
+
+						} catch ( any e ) {
+
+							fail( 'Value on a rejected promise not throwing expected error' );
+
+						}
+
+					} );
+
+					it( 'hits onrejected and returns the value' , function() {
+
+
+						var actual = Promise::reject( 'reject value' )
+							.done(
+								function(){
+
+									fail( 'Not expected to hit onfulfilled' );
+
+								},
+								function( error_message ) {
+									expect( error_message ).toBe( 'reject value' );
+									return 'done value';
+								}
+							);
+
+						expect( actual ).toBe( 'done value' );
+
+					} );
+
+				} );
 
 			} );
 
@@ -308,7 +541,7 @@ component extends='testbox.system.BaseSpec' {
 				expect( actual ).toBeTypeOf( 'component' );
 				expect( actual ).toBeInstanceOf( 'source.plugins.Promise' );
 
-				var actual_value = actual.value();
+				var actual_value = actual.done();
 				expect( actual_value ).toBe( 'speed racer' );
 
 			} );
@@ -344,7 +577,7 @@ component extends='testbox.system.BaseSpec' {
 							resolve( 'slow' );
 						} )
 					] )
-					.value();
+					.done();
 
 				var time_taken = GetTickCount() - start_ms;
 				expect( time_taken ).toBeLT( 99 );
@@ -364,7 +597,7 @@ component extends='testbox.system.BaseSpec' {
 						} ),
 						Promise::resolve( 'quick' )
 					] )
-					.value();
+					.done();
 
 				var time_taken = GetTickCount() - start_ms;
 				expect( time_taken ).toBeLT( 99 );
@@ -423,7 +656,7 @@ component extends='testbox.system.BaseSpec' {
 				expect( actual ).toBeTypeOf( 'component' );
 				expect( actual ).toBeInstanceOf( 'source.plugins.Promise' );
 
-				var actual_value = actual.value();
+				var actual_value = actual.done();
 
 				expect( actual_value ).toBeArray();
 				expect( actual_value ).toHaveLength( 0 );
@@ -447,8 +680,7 @@ component extends='testbox.system.BaseSpec' {
 					Promise::resolve( 'quick 3' )
 				] );
 
-
-				var actual_value = actual.value();
+				var actual_value = actual.done();
 
 				expect( actual_value ).toBeArray();
 				expect( actual_value ).toHaveLength( 5 );
@@ -474,7 +706,7 @@ component extends='testbox.system.BaseSpec' {
 						'not a promise',
 						Promise::resolve( 'promise 2' )
 					] )
-					.value();
+					.done();
 
 				expect( actual ).toBe( [
 					'promise 1',
@@ -499,7 +731,7 @@ component extends='testbox.system.BaseSpec' {
 							return arguments.error;
 						}
 					)
-					.value();
+					.done();
 
 				expect( actual ).toBe( 'reject 1' );
 
@@ -528,7 +760,7 @@ component extends='testbox.system.BaseSpec' {
 							return arguments.error;
 						}
 					)
-					.value();
+					.done();
 
 				var time_taken = GetTickCount() - start_ms;
 				expect( time_taken ).toBeGT( 99 );
@@ -553,7 +785,7 @@ component extends='testbox.system.BaseSpec' {
 				expect( actual ).toBeTypeOf( 'component' );
 				expect( actual ).toBeInstanceOf( 'source.plugins.Promise' );
 
-				expect( actual.value() ).toBe( 'resolved value' );
+				expect( actual.done() ).toBe( 'resolved value' );
 
 
 			} );
@@ -574,7 +806,7 @@ component extends='testbox.system.BaseSpec' {
 
 				try {
 
-					actual.value();
+					actual.done();
 
 					fail( 'Value on a rejected promise not throwing expected error' );
 

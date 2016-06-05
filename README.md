@@ -10,7 +10,7 @@ Drop `/dist/extension-lucee-promise-x.x.x.x.lex` into `{server|web-context}/depl
 
 The syntax for lucee-promise is very similar to Javascript promises.  Documentation for this can be found in the [PromiseJS API documentation](https://www.promisejs.org/api/) and [Promise on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). The main differences are as follows
 
-* In Lucee the promise at present does not automatically update itself with the resolved value.  To retrieve the final value you must use `promise_object.value()`
+* In Lucee the promise at present does not automatically update itself with the resolved value.  To retrieve the final value you must use `promise_object.done()`
 * Instead of `Promise.resolve( ... )` you must use `Promise::resolve( ... )`
 * Instead of `Promise.reject( ... )` you must use `Promise::reject( ... )`
 * Instead of `Promise.all( [ ] )` you must use `Promise::all( [ ] )`
@@ -20,8 +20,9 @@ If you have any questions feel free to look me up on CFML Slack or anywhere you 
 
 ## Supported methods
 
-* `Promise.prototype.value()`
+* `Promise.prototype.value()` ( mostly used internally, but can be used in the same way as `Promise.prototype.done()` without any onFulfilled or onRejected callbacks )
 * `Promise.prototype.then( function( data ) {} , function( error_message ) {} )`
+* `Promise.prototype.done( function( data ) {} , function( error_message ) {} )`
 * `Promise.prototype.catch( function( error_message ) {} )`
 * `Promise::all( array_of_promises_and_values )`
 * `Promise::race( array_of_promises )`

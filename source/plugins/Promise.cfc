@@ -31,14 +31,19 @@ component {
 			);
 		};
 
-		var return_value;
+		var return_value = NullValue();
 
 		try {
 
 			try {
 
 				var response_value = this.value(); 
-				return_value = arguments.onFulfilled( response_value ) ?: response_value;
+
+				if ( !IsNull( response_value ) ) {
+
+					return_value = arguments.onFulfilled( response_value ) ?: response_value;
+
+				}
 
 			} catch ( Promise.rejected e ) {
 
@@ -60,10 +65,19 @@ component {
 			return return_value;
 		}
 
-		return Promise::resolve( return_value );;
+		return Promise::resolve( return_value );
 
 	}
 
+	public function done(
+		function onFulfilled,
+		function onRejected
+	) {
+
+		return then( argumentCollection = arguments )
+			.value();
+
+	}
 
 	public function catch(
 		function onRejected
@@ -82,19 +96,21 @@ component {
 				action = 'join';
 
 			this.thread_response = cfthread[ this.thread_name ];
-
+			
 		}
+		
+		var thread_response_value = this.thread_response.value ?: '';
 
 		if ( !( this.thread_response.success ?: true ) ) {
 
 			throw( 
 				type = 'Promise.rejected',
-				message = this.thread_response.value ?: ''
+				message = thread_response_value
 			);
 
 		}
 
-		return this.thread_response.value ?: NullValue();
+		return thread_response_value;
 
 	}
 
