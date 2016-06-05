@@ -87,10 +87,6 @@ component {
 		);
 	}
 
-	public function finally() {
-
-	}
-
 	public function value() {
 
 		if ( !IsDefined( 'this.thread_response' ) ) {

@@ -39,9 +39,6 @@ component extends='testbox.system.BaseSpec' {
 				expect( actual ).toHaveKey( 'done' );
 				expect( actual.done ).toBeTypeOf( 'function' );
 
-				expect( actual ).toHaveKey( 'finally' );
-				expect( actual.finally ).toBeTypeOf( 'function' );
-
 				expect( actual ).toHaveKey( 'value' );
 				expect( actual.done ).toBeTypeOf( 'function' );
 
