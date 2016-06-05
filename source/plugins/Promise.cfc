@@ -32,19 +32,17 @@ component {
 		};
 
 		var return_value;
-		var response_value;
 
 		try {
 
 			try {
 
-				response_value = this.value(); 
-				return_value = arguments.onFulfilled( response_value );
+				var response_value = this.value(); 
+				return_value = arguments.onFulfilled( response_value ) ?: response_value;
 
 			} catch ( Promise.rejected e ) {
 
-				respponse_value = Promise::reject( e.message );
-				return_value = arguments.onRejected( e.message );
+				return_value = arguments.onRejected( e.message ) ?: Promise::reject( e.message );
 
 			}
 
@@ -57,8 +55,6 @@ component {
 			return Promise::reject( e.detail ?: e.message ?: e.type );
 
 		}
-
-		var return_value = return_value ?: response_value;
 
 		if ( IsInstanceOf( return_value , 'Promise' ) ) {
 			return return_value;
